@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sponsors | 6-DOF Drone Team</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg:      #06060f;
+    --bg2:     #0d0d1c;
+    --bg3:     #11112a;
+    --purple:  #b84fc8;
+    --purple2: #8c31a1;
+    --text:    #f0eef5;
+    --muted:   #8a879e;
+    --border:  rgba(184,79,200,0.18);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  a { text-decoration: none; color: inherit; }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2.5rem;
+    height: 64px;
+    background: rgba(6,6,15,0.88);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  .nav-logo img { width: 32px; }
+  .nav-links { display: flex; gap: 2px; }
+
+  .nav-links a {
+    color: var(--muted);
+    font-size: 13.5px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    transition: color 0.18s, background 0.18s;
+  }
+
+  .nav-links a:hover  { color: white; background: rgba(255,255,255,0.06); }
+  .nav-links a.active { color: white; }
+
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.65s ease, transform 0.65s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* PAGE HEADER */
+  .page-header {
+    padding: 130px 24px 70px;
+    max-width: 1140px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .page-header::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100vw; right: -100vw;
+    height: 100%;
+    background: radial-gradient(ellipse at 50% 0%, rgba(138,49,161,0.14) 0%, transparent 65%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--purple);
+    margin-bottom: 14px;
+  }
+
+  .section-label::before { content: ''; width: 18px; height: 1px; background: var(--purple); }
+
+  .page-header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 5.5vw, 64px);
+    font-weight: 800;
+    letter-spacing: -2.5px;
+    line-height: 1.06;
+    margin-bottom: 16px;
+  }
+
+  .page-header h1 span {
+    background: linear-gradient(135deg, #d080dc, #8c31a1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .page-header p {
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 500px;
+    line-height: 1.8;
+  }
+
+  /* MAIN WRAP */
+  .main-wrap {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 24px 120px;
+  }
+
+  /* CURRENT SPONSORS */
+  .sponsors-section { margin-bottom: 80px; }
+
+  .sponsors-section-header { margin-bottom: 36px; }
+
+  .sponsors-section-header h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(26px, 3.5vw, 38px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+  }
+
+  .sponsors-section-header p { color: var(--muted); font-size: 14.5px; }
+
+  /* sponsor logo grid — when sponsors exist, add .sponsor-logo-grid and .sponsor-logo-card items */
+  .sponsor-logo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .sponsor-logo-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .sponsor-logo-card:hover { border-color: rgba(184,79,200,0.42); transform: translateY(-3px); }
+  .sponsor-logo-card img { max-width: 100%; max-height: 70px; object-fit: contain; filter: grayscale(0.2); }
+
+  /* empty state */
+  .sponsors-empty {
+    border: 1px dashed rgba(184,79,200,0.22);
+    border-radius: 18px;
+    padding: 80px 24px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .sponsors-empty-icon {
+    width: 60px; height: 60px;
+    border-radius: 16px;
+    background: rgba(184,79,200,0.08);
+    border: 1px solid rgba(184,79,200,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sponsors-empty-icon svg {
+    width: 28px; height: 28px;
+    stroke: rgba(184,79,200,0.45);
+    fill: none;
+    stroke-width: 1.4;
+  }
+
+  .sponsors-empty h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .sponsors-empty p { color: var(--muted); font-size: 14px; max-width: 360px; line-height: 1.7; }
+
+  .sponsors-empty a {
+    color: #d080dc;
+    font-weight: 500;
+    font-size: 13.5px;
+    transition: color 0.18s;
+  }
+
+  .sponsors-empty a:hover { color: white; }
+
+  /* DIVIDER */
+  .section-divider {
+    height: 1px;
+    background: var(--border);
+    margin-bottom: 80px;
+  }
+
+  /* CONTACT SECTION */
+  .contact-section {
+    background: linear-gradient(135deg, #1a0d2e, #110d22);
+    border: 1px solid rgba(184,79,200,0.28);
+    border-radius: 20px;
+    padding: 64px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .contact-section::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(138,49,161,0.18), transparent 65%);
+    pointer-events: none;
+  }
+
+  .contact-text { position: relative; }
+
+  .contact-text h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(26px, 3.5vw, 38px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+
+  .contact-text p {
+    color: var(--muted);
+    font-size: 14.5px;
+    line-height: 1.8;
+    margin-bottom: 28px;
+  }
+
+  .contact-detail {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+  }
+
+  .contact-detail-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: rgba(184,79,200,0.12);
+    border: 1px solid rgba(184,79,200,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .contact-detail-icon svg { width: 16px; height: 16px; stroke: #c06acc; fill: none; stroke-width: 1.8; }
+
+  .contact-detail a {
+    color: #d080dc;
+    font-weight: 500;
+    transition: color 0.18s;
+  }
+
+  .contact-detail a:hover { color: white; }
+
+  /* EMAIL CARD */
+  .email-card {
+    position: relative;
+    background: rgba(13,13,28,0.7);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .email-card-label {
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .email-display {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(14px, 2vw, 20px);
+    font-weight: 700;
+    color: var(--text);
+    word-break: break-all;
+  }
+
+  .email-divider { height: 1px; background: var(--border); }
+
+  .email-note { color: var(--muted); font-size: 13px; line-height: 1.7; }
+
+  .email-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--purple2);
+    color: white;
+    font-size: 13.5px;
+    font-weight: 500;
+    padding: 12px 22px;
+    border-radius: 9px;
+    align-self: flex-start;
+    transition: background 0.18s, transform 0.18s;
+  }
+
+  .email-btn:hover { background: var(--purple); transform: translateY(-2px); }
+  .email-btn svg { width: 15px; height: 15px; stroke: white; fill: none; stroke-width: 2; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    background: var(--bg2);
+    padding: 52px 2.5rem 32px;
+  }
+
+  .footer-inner {
+    max-width: 1140px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 48px;
+  }
+
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .footer-brand img { width: 36px; }
+  .footer-desc { color: var(--muted); font-size: 13px; line-height: 1.8; max-width: 280px; }
+
+  .footer-col h5 {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  .footer-col a { display: block; color: var(--muted); font-size: 13px; padding: 4px 0; transition: color 0.15s; }
+  .footer-col a:hover { color: white; }
+
+  .footer-bottom {
+    max-width: 1140px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-bottom-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .footer-bottom-logo img { width: 30px; }
+  .footer-copy { color: var(--muted); font-size: 12px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 860px) {
+    .contact-section { grid-template-columns: 1fr; padding: 40px 28px; gap: 32px; }
+    .footer-inner { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 560px) {
+    nav { padding: 0 1rem; }
+    .contact-section { padding: 32px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <img src="logo.png" alt="6-DOF Drone">
+    6-DOF Drone Team
+  </div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="vehicle.html">Vehicle</a>
+    <a href="team.html">Team</a>
+    <a href="blog.html">Blog</a>
+    <a href="sponsors.html" class="active">Sponsors</a>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="section-label reveal">Sponsorship</div>
+  <h1 class="reveal">Those who<br><span>back the build.</span></h1>
+  <p class="reveal">We're a student UAV team from KFUPM building an autonomous drone for SUAS 2026. Our sponsors make the mission possible.</p>
+</div>
+
+<div class="main-wrap">
+
+  <!-- CURRENT SPONSORS -->
+  <div class="sponsors-section reveal">
+    <div class="sponsors-section-header">
+      <div class="section-label">Our Sponsors</div>
+      <h2>Current sponsors</h2>
+      <p>Organizations and individuals supporting the 6-DOF Drone Team for SUAS 2026.</p>
+    </div>
+
+    <!-- EMPTY STATE — remove this block and add .sponsor-logo-grid cards when you have sponsors -->
+    <div class="sponsors-empty">
+      <div class="sponsors-empty-icon">
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+      </div>
+      <h3>No sponsors yet — be the first.</h3>
+      <p>We're looking for organizations and individuals who want to support student engineering and autonomous systems development.</p>
+      <a href="mailto:team6dof@outlook.com">Reach out at team6dof@outlook.com →</a>
+    </div>
+
+    <!--
+      WHEN YOU HAVE SPONSORS — replace the empty block above with:
+
+      <div class="sponsor-logo-grid">
+        <div class="sponsor-logo-card">
+          <img src="sponsor1-logo.png" alt="Sponsor Name">
+        </div>
+        <div class="sponsor-logo-card">
+          <img src="sponsor2-logo.png" alt="Sponsor Name">
+        </div>
+      </div>
+    -->
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- CONTACT -->
+  <div class="contact-section reveal">
+    <div class="contact-text">
+      <div class="section-label" style="margin-bottom:14px;">Get in Touch</div>
+      <h2>Interested in<br>sponsoring us?</h2>
+      <p>Whether you're a company, organization, or individual — reach out and we'll get back to you within 48 hours with everything you need to know.</p>
+      <div class="contact-detail">
+        <div class="contact-detail-icon">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <a href="mailto:team6dof@outlook.com">team6dof@outlook.com</a>
+      </div>
+    </div>
+
+    <div class="email-card">
+      <div class="email-card-label">Contact us directly</div>
+      <div class="email-display">team6dof@outlook.com</div>
+      <div class="email-divider"></div>
+      <p class="email-note">Send us a message with your name, organization, and any questions about supporting the team. We respond within 48 hours.</p>
+      <a href="mailto:team6dof@outlook.com" class="email-btn">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Send an Email
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">
+        <img src="logo.png" alt="6-DOF Drone">
+        6-DOF Drone Team
+      </div>
+      <p class="footer-desc">An autonomous UAV team from KFUPM competing in the 2026 Student Unmanned Aerial Systems (SUAS) competition.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Navigate</h5>
+      <a href="index.html">Home</a>
+      <a href="vehicle.html">Vehicle</a>
+      <a href="team.html">Team</a>
+      <a href="blog.html">Blog</a>
+      <a href="sponsors.html">Sponsors</a>
+    </div>
+    <div class="footer-col">
+      <h5>Subsystems</h5>
+      <a href="ai.html">AI / Perception</a>
+      <a href="hardware.html">Hardware</a>
+      <a href="gcs.html">GCS</a>
+      <a href="mission.html">Mission</a>
+      <a href="docs.html">Documentation</a>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="footer-bottom-logo">
+      <img src="logo.png" alt="6-DOF Drone">
+      6-DOF Drone Team
+    </div>
+    <span class="footer-copy">© 2026 6-DOF Drone Team — KFUPM · SUAS Competition</span>
+  </div>
+</footer>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
