@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Updates | 6-DOF Drone Team</title>
+  <link rel="icon" type="image/png" href="logo.png">
+
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body{
+      margin:0;
+      font-family:'DM Sans',sans-serif;
+      background:#080810;
+      color:#f0eef5;
+    }
+
+    nav{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:1rem 2rem;
+      background:#0e0e1a;
+      position:sticky;
+      top:0;
+      z-index:1000;
+    }
+
+    nav a{
+      color:#8a879e;
+      text-decoration:none;
+      margin:0 10px;
+    }
+
+    nav a:hover,
+    nav a.active{
+      color:#ffffff;
+    }
+
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:700;
+      color:white;
+    }
+
+    .logo img{
+      width:35px;
+    }
+
+    .page-hero{
+      text-align:center;
+      padding:90px 20px 50px;
+      max-width:900px;
+      margin:auto;
+    }
+
+    .page-hero h1{
+      font-family:'Syne',sans-serif;
+      font-size:3rem;
+      margin-bottom:15px;
+    }
+
+    .page-hero p{
+      color:#b7b3c8;
+      line-height:1.8;
+      max-width:700px;
+      margin:0 auto;
+    }
+
+    .posts-wrapper{
+      max-width:1000px;
+      margin:0 auto;
+      padding:20px 20px 80px;
+    }
+
+    .full-post{
+      background:linear-gradient(180deg, #121222 0%, #0c0c18 100%);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:24px;
+      overflow:hidden;
+      margin-bottom:35px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    .full-post img{
+      width:100%;
+      height:400px;
+      object-fit:cover;
+      display:block;
+    }
+
+    .full-post-content{
+      padding:30px;
+    }
+
+    .post-meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:18px;
+    }
+
+    .post-date,
+    .post-category{
+      font-size:0.82rem;
+      padding:7px 12px;
+      border-radius:999px;
+    }
+
+    .post-date{
+      background:rgba(255,255,255,0.06);
+      color:#d7d4e5;
+    }
+
+    .post-category{
+      background:rgba(192,106,204,0.14);
+      color:#d992e7;
+    }
+
+    .full-post h2{
+      font-family:'Syne',sans-serif;
+      font-size:2rem;
+      margin:0 0 18px;
+      color:white;
+    }
+
+    .full-post p{
+      color:#c7c3d4;
+      line-height:1.9;
+      font-size:1rem;
+      margin-bottom:16px;
+    }
+
+    .highlight{
+      color:#ffffff;
+      font-weight:700;
+    }
+
+    footer{
+      text-align:center;
+      padding:30px 20px;
+      color:#8a879e;
+      border-top:1px solid rgba(255,255,255,0.08);
+    }
+
+    @media (max-width:768px){
+      .page-hero h1{
+        font-size:2.2rem;
+      }
+
+      .full-post img{
+        height:250px;
+      }
+
+      .full-post h2{
+        font-size:1.6rem;
+      }
+
+      nav{
+        flex-direction:column;
+        gap:10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">
+      <img src="logo.png" alt="Team Logo">
+      <span>6-DOF Drone Team</span>
+    </div>
+
+    <div>
+      <a href="index.html">Home</a>
+      <a href="team.html">Team</a>
+      <a href="mission.html">Mission</a>
+      <a href="hardware.html">Hardware</a>
+      <a href="ai.html">AI</a>
+      <a href="gcs.html">GCS</a>
+      <a href="docs.html">Docs</a>
+      <a href="updates.html" class="active">Updates</a>
+    </div>
+  </nav>
+
+  <section class="page-hero">
+    <h1>Team Updates</h1>
+    <p>
+      A record of our progress, milestones, lab sessions, and the journey of Team 6-DOF as we build toward SUAS 2026.
+    </p>
+  </section>
+
+  <section class="posts-wrapper">
+
+    <article class="full-post">
+      <img src="stage2.jpeg" alt="Team 6-DOF first lab session">
+      <div class="full-post-content">
+        <div class="post-meta">
+          <span class="post-date">March 29, 2026</span>
+          <span class="post-category">Lab Session</span>
+        </div>
+
+        <h2>From 3 to 11 — From Idea to Action 🚀</h2>
+
+        <p>
+          On Sunday, March 29, Team 6-DOF reached a major milestone: our very first lab session together.
+        </p>
+
+        <p>
+          During this session, we successfully set up the Pixhawk, connected it to the RC system, and achieved full actuation control. We then integrated the system with the ground station and took it a step further by developing our own code from scratch on the Jetson Nano companion computer.
+        </p>
+
+        <p>
+          What began as a small group of three driven individuals has now grown into a team of eleven — each member bringing unique skills, energy, and vision.
+        </p>
+
+        <p>
+          This lab was more than just hardware and code. It was about collaboration, problem-solving, and building something bigger than ourselves.
+        </p>
+
+        <p class="highlight">
+          This is only the beginning.
+        </p>
+      </div>
+    </article>
+
+    <article class="full-post">
+      <img src="stage2.jpeg" alt="Upcoming testing update">
+      <div class="full-post-content">
+        <div class="post-meta">
+          <span class="post-date">Coming Soon</span>
+          <span class="post-category">Testing</span>
+        </div>
+
+        <h2>System Integration Progress</h2>
+
+        <p>
+          This section will include the next stage of our technical progress, including integration updates, testing sessions, and lessons learned as we continue refining our drone platform.
+        </p>
+      </div>
+    </article>
+
+    <article class="full-post">
+      <img src="stage2.jpeg" alt="Upcoming team update">
+      <div class="full-post-content">
+        <div class="post-meta">
+          <span class="post-date">Coming Soon</span>
+          <span class="post-category">Team Growth</span>
+        </div>
+
+        <h2>Building the Team Behind the Drone</h2>
+
+        <p>
+          Future updates will highlight how our team is evolving, how responsibilities are distributed, and how each member contributes to turning our shared vision into reality.
+        </p>
+      </div>
+    </article>
+
+  </section>
+
+  <footer>
+    © 2026 Team 6-DOF | SUAS Project Updates
+  </footer>
+
+</body>
+</html>
