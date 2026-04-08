@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog | 6-DOF Drone Team</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg:      #06060f;
+    --bg2:     #0d0d1c;
+    --bg3:     #11112a;
+    --purple:  #b84fc8;
+    --purple2: #8c31a1;
+    --text:    #f0eef5;
+    --muted:   #8a879e;
+    --border:  rgba(184,79,200,0.18);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  a { text-decoration: none; color: inherit; }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2.5rem;
+    height: 64px;
+    background: rgba(6,6,15,0.88);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  .nav-logo img { width: 32px; }
+  .nav-links { display: flex; gap: 2px; }
+
+  .nav-links a {
+    color: var(--muted);
+    font-size: 13.5px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    transition: color 0.18s, background 0.18s;
+  }
+
+  .nav-links a:hover  { color: white; background: rgba(255,255,255,0.06); }
+  .nav-links a.active { color: white; }
+
+  /* PAGE HEADER */
+  .page-header {
+    padding: 130px 24px 64px;
+    max-width: 1140px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .page-header::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100vw; right: -100vw;
+    height: 100%;
+    background: radial-gradient(ellipse at 50% 0%, rgba(138,49,161,0.14) 0%, transparent 65%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--purple);
+    margin-bottom: 14px;
+  }
+
+  .section-label::before { content: ''; width: 18px; height: 1px; background: var(--purple); }
+
+  .page-header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 5vw, 60px);
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1.08;
+    margin-bottom: 14px;
+  }
+
+  .page-header p {
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 480px;
+  }
+
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.65s ease, transform 0.65s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.08s; }
+  .reveal-delay-2 { transition-delay: 0.16s; }
+  .reveal-delay-3 { transition-delay: 0.24s; }
+
+  /* MAIN CONTENT */
+  .blog-wrap {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 24px 120px;
+  }
+
+  /* FEATURED POST — spans full width */
+  .featured-post {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 32px;
+    transition: border-color 0.22s, transform 0.22s;
+  }
+
+  .featured-post:hover {
+    border-color: rgba(184,79,200,0.42);
+    transform: translateY(-4px);
+  }
+
+  .featured-thumb {
+    position: relative;
+    min-height: 360px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #120d22, #0d0d1c);
+  }
+
+  .featured-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    position: absolute;
+    inset: 0;
+  }
+
+  /* overlay tint on image */
+  .featured-thumb::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(8,8,16,0.35), transparent);
+  }
+
+  .featured-thumb-placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: 360px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #120d22, #0d0d1c);
+  }
+
+  .featured-thumb-placeholder svg {
+    width: 72px; height: 72px;
+    stroke: rgba(184,79,200,0.3);
+    fill: none;
+    stroke-width: 1.2;
+  }
+
+  .featured-badge {
+    position: absolute;
+    top: 20px; left: 20px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(184,79,200,0.85);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 20px;
+  }
+
+  .featured-badge::before {
+    content: '';
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: white;
+  }
+
+  .featured-body {
+    padding: 48px 44px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .post-meta { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+
+  .tag {
+    font-size: 11px;
+    padding: 3px 11px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  .tag-date { background: rgba(255,255,255,0.07); color: var(--muted); }
+  .tag-cat  { background: rgba(184,79,200,0.14); color: #d080dc; }
+
+  .featured-body h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 800;
+    letter-spacing: -0.8px;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+
+  .featured-body p {
+    color: var(--muted);
+    font-size: 14.5px;
+    line-height: 1.8;
+    margin-bottom: 28px;
+  }
+
+  /* key takeaways inside featured */
+  .takeaways {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  .takeaway {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+
+  .takeaway-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--purple);
+    flex-shrink: 0;
+    margin-top: 8px;
+  }
+
+  .read-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--purple2);
+    color: white;
+    font-size: 13.5px;
+    font-weight: 500;
+    padding: 11px 22px;
+    border-radius: 9px;
+    align-self: flex-start;
+    transition: background 0.18s, transform 0.18s;
+  }
+
+  .read-link:hover { background: var(--purple); transform: translateY(-2px); }
+
+  /* DIVIDER */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .divider-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .divider-line { flex: 1; height: 1px; background: var(--border); }
+
+  /* CARD GRID */
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .post-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color 0.22s, transform 0.22s;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .post-card:hover {
+    border-color: rgba(184,79,200,0.4);
+    transform: translateY(-4px);
+  }
+
+  .post-thumb {
+    width: 100%; height: 190px;
+    object-fit: cover;
+    display: block;
+    background: #0a0a18;
+  }
+
+  .post-thumb-placeholder {
+    width: 100%; height: 190px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #120d22, #0d0d1c);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .post-thumb-placeholder svg {
+    width: 42px; height: 42px;
+    stroke: rgba(184,79,200,0.32);
+    fill: none;
+    stroke-width: 1.4;
+  }
+
+  .post-body { padding: 22px; flex: 1; display: flex; flex-direction: column; }
+
+  .post-body h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  .post-body p { color: var(--muted); font-size: 13px; line-height: 1.7; flex: 1; }
+
+  .post-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--purple);
+    font-weight: 500;
+    transition: gap 0.18s;
+    align-self: flex-start;
+  }
+
+  .post-link:hover { gap: 9px; }
+
+  /* COMING SOON STATE */
+  .post-card.coming-soon { opacity: 0.6; pointer-events: none; }
+  .post-card.coming-soon:hover { transform: none; }
+
+  /* EMPTY STATE */
+  .empty-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .empty-card {
+    border: 1px dashed rgba(184,79,200,0.2);
+    border-radius: 16px;
+    height: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: rgba(184,79,200,0.3);
+  }
+
+  .empty-card svg { width: 32px; height: 32px; stroke: currentColor; fill: none; stroke-width: 1.2; }
+  .empty-card span { font-size: 12px; letter-spacing: 0.5px; }
+
+  /* NEWSLETTER / CTA STRIP */
+  .blog-cta {
+    margin-top: 64px;
+    background: linear-gradient(135deg, #1a0d2e, #110d22);
+    border: 1px solid rgba(184,79,200,0.24);
+    border-radius: 18px;
+    padding: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    flex-wrap: wrap;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .blog-cta::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(138,49,161,0.18), transparent 65%);
+    pointer-events: none;
+  }
+
+  .blog-cta-text h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+
+  .blog-cta-text p { color: var(--muted); font-size: 14px; }
+
+  .cta-links { display: flex; gap: 12px; flex-wrap: wrap; position: relative; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 22px;
+    border-radius: 9px;
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .btn-primary { background: var(--purple2); color: white; border: 1px solid transparent; }
+  .btn-primary:hover { background: var(--purple); transform: translateY(-2px); }
+  .btn-ghost { border: 1px solid var(--border); color: var(--text); background: rgba(255,255,255,0.04); }
+  .btn-ghost:hover { border-color: rgba(184,79,200,0.45); background: rgba(184,79,200,0.08); transform: translateY(-2px); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    background: var(--bg2);
+    padding: 52px 2.5rem 32px;
+  }
+
+  .footer-inner {
+    max-width: 1140px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 48px;
+  }
+
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .footer-brand img { width: 36px; }
+  .footer-desc { color: var(--muted); font-size: 13px; line-height: 1.8; max-width: 280px; }
+
+  .footer-col h5 {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  .footer-col a { display: block; color: var(--muted); font-size: 13px; padding: 4px 0; transition: color 0.15s; }
+  .footer-col a:hover { color: white; }
+
+  .footer-bottom {
+    max-width: 1140px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-bottom-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .footer-bottom-logo img { width: 30px; }
+  .footer-copy { color: var(--muted); font-size: 12px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 860px) {
+    .featured-post { grid-template-columns: 1fr; }
+    .featured-thumb { min-height: 240px; }
+    .featured-thumb-placeholder { min-height: 240px; }
+    .featured-body { padding: 32px 28px; }
+    .posts-grid { grid-template-columns: 1fr 1fr; }
+    .empty-grid  { grid-template-columns: 1fr 1fr; }
+    .footer-inner { grid-template-columns: 1fr; }
+    .blog-cta { flex-direction: column; align-items: flex-start; }
+  }
+
+  @media (max-width: 560px) {
+    nav { padding: 0 1rem; }
+    .posts-grid { grid-template-columns: 1fr; }
+    .empty-grid  { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <img src="logo.png" alt="6-DOF Drone">
+    6-DOF Drone Team
+  </div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="vehicle.html">Vehicle</a>
+    <a href="team.html">Team</a>
+    <a href="blog.html" class="active">Blog</a>
+    <a href="sponsors.html">Sponsors</a>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="section-label reveal">Field Notes</div>
+  <h1 class="reveal">From the lab.<br>From the field.</h1>
+  <p class="reveal">Progress updates, build logs, and milestones from the 6-DOF Drone Team — documented as we go.</p>
+</div>
+
+<div class="blog-wrap">
+
+  <!-- ── FEATURED POST ── -->
+  <article class="featured-post reveal">
+
+    <div class="featured-thumb">
+      <img src="stage2.jpeg" alt="First lab session"
+           onerror="this.style.display='none';">
+      <div class="featured-badge">Latest Post</div>
+    </div>
+
+    <div class="featured-body">
+      <div class="post-meta">
+        <span class="tag tag-date">March 29, 2026</span>
+        <span class="tag tag-cat">Lab</span>
+        <span class="tag tag-cat">Milestone</span>
+      </div>
+
+      <h2>From 3 to 11 —<br>From Idea to Action</h2>
+
+      <p>What started as a conversation between three people turned into an 11-person team ready to build an autonomous drone from scratch. Our first lab session brought everything together — hardware, software, and the people behind it.</p>
+
+      <div class="takeaways">
+        <div class="takeaway">
+          <div class="takeaway-dot"></div>
+          <span>Pixhawk 6X powered on and configured for the first time</span>
+        </div>
+        <div class="takeaway">
+          <div class="takeaway-dot"></div>
+          <span>RC transmitter and receiver integrated and tested</span>
+        </div>
+        <div class="takeaway">
+          <div class="takeaway-dot"></div>
+          <span>Jetson Nano booted and connected to the dev environment</span>
+        </div>
+        <div class="takeaway">
+          <div class="takeaway-dot"></div>
+          <span>Team roles assigned across all 7 subteams</span>
+        </div>
+      </div>
+
+      <a href="#" class="read-link">Read Full Post →</a>
+    </div>
+
+  </article>
+
+  <!-- COMING SOON DIVIDER -->
+  <div class="divider reveal">
+    <div class="divider-line"></div>
+    <span class="divider-label">More posts coming soon</span>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- PLACEHOLDER CARDS for future posts -->
+  <div class="empty-grid">
+
+    <div class="empty-card reveal reveal-delay-1">
+      <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <span>Next post — in progress</span>
+    </div>
+
+    <div class="empty-card reveal reveal-delay-2">
+      <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <span>Coming soon</span>
+    </div>
+
+    <div class="empty-card reveal reveal-delay-3">
+      <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <span>Coming soon</span>
+    </div>
+
+  </div>
+
+  <!-- BLOG CTA -->
+  <div class="blog-cta reveal">
+    <div class="blog-cta-text">
+      <h3>Want to follow our progress?</h3>
+      <p>We post updates as we build — check back for new posts or explore the rest of the site.</p>
+    </div>
+    <div class="cta-links">
+      <a class="btn btn-primary" href="vehicle.html">Explore the Vehicle</a>
+      <a class="btn btn-ghost" href="team.html">Meet the Team</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">
+        <img src="logo.png" alt="6-DOF Drone">
+        6-DOF Drone Team
+      </div>
+      <p class="footer-desc">An autonomous UAV team from KFUPM competing in the 2026 Student Unmanned Aerial Systems (SUAS) competition.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Navigate</h5>
+      <a href="index.html">Home</a>
+      <a href="vehicle.html">Vehicle</a>
+      <a href="team.html">Team</a>
+      <a href="blog.html">Blog</a>
+      <a href="sponsors.html">Sponsors</a>
+    </div>
+    <div class="footer-col">
+      <h5>Subsystems</h5>
+      <a href="ai.html">AI / Perception</a>
+      <a href="hardware.html">Hardware</a>
+      <a href="gcs.html">GCS</a>
+      <a href="mission.html">Mission</a>
+      <a href="docs.html">Documentation</a>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="footer-bottom-logo">
+      <img src="logo.png" alt="6-DOF Drone">
+      6-DOF Drone Team
+    </div>
+    <span class="footer-copy">© 2026 6-DOF Drone Team — KFUPM · SUAS Competition</span>
+  </div>
+</footer>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
