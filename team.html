@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team | 6-DOF Drone Team</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg:      #06060f;
+    --bg2:     #0d0d1c;
+    --bg3:     #11112a;
+    --purple:  #b84fc8;
+    --purple2: #8c31a1;
+    --text:    #f0eef5;
+    --muted:   #8a879e;
+    --border:  rgba(184,79,200,0.18);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  a { text-decoration: none; color: inherit; }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2.5rem;
+    height: 64px;
+    background: rgba(6,6,15,0.88);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  .nav-logo img { width: 32px; }
+  .nav-links { display: flex; gap: 2px; }
+
+  .nav-links a {
+    color: var(--muted);
+    font-size: 13.5px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    transition: color 0.18s, background 0.18s;
+  }
+
+  .nav-links a:hover  { color: white; background: rgba(255,255,255,0.06); }
+  .nav-links a.active { color: white; }
+
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.08s; }
+  .reveal-delay-2 { transition-delay: 0.16s; }
+  .reveal-delay-3 { transition-delay: 0.24s; }
+  .reveal-delay-4 { transition-delay: 0.32s; }
+  .reveal-delay-5 { transition-delay: 0.40s; }
+
+  /* PAGE HEADER */
+  .page-header {
+    padding: 130px 24px 64px;
+    max-width: 1140px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .page-header::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100vw; right: -100vw;
+    height: 100%;
+    background: radial-gradient(ellipse at 50% 0%, rgba(138,49,161,0.13) 0%, transparent 65%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--purple);
+    margin-bottom: 14px;
+  }
+
+  .section-label::before { content: ''; width: 18px; height: 1px; background: var(--purple); }
+
+  .page-header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 5.5vw, 64px);
+    font-weight: 800;
+    letter-spacing: -2.5px;
+    line-height: 1.06;
+    margin-bottom: 16px;
+  }
+
+  .page-header p {
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 520px;
+    line-height: 1.8;
+  }
+
+  /* STATS ROW */
+  .stats-row {
+    display: flex;
+    gap: 0;
+    margin-top: 48px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    background: rgba(13,13,28,0.7);
+    max-width: 480px;
+  }
+
+  .stat-item {
+    flex: 1;
+    padding: 18px 24px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+
+  .stat-item:last-child { border-right: none; }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--purple);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-lbl {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  /* MAIN WRAP */
+  .main-wrap {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 24px 120px;
+  }
+
+  /* SUBTEAM BLOCK */
+  .subteam-block { margin-bottom: 72px; }
+
+  .subteam-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .subteam-icon {
+    width: 36px; height: 36px;
+    border-radius: 9px;
+    background: rgba(184,79,200,0.1);
+    border: 1px solid rgba(184,79,200,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .subteam-icon svg {
+    width: 16px; height: 16px;
+    stroke: #c06acc;
+    fill: none;
+    stroke-width: 1.8;
+  }
+
+  .subteam-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.2px;
+  }
+
+  .subteam-count {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3px 12px;
+  }
+
+  /* CARD GRIDS */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .cards-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    max-width: 760px;
+  }
+
+  /* MEMBER CARD */
+  .member-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: border-color 0.22s, transform 0.22s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .member-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(184,79,200,0.45), transparent);
+    opacity: 0;
+    transition: opacity 0.22s;
+  }
+
+  .member-card:hover {
+    border-color: rgba(184,79,200,0.4);
+    transform: translateY(-3px);
+  }
+
+  .member-card:hover::before { opacity: 1; }
+
+  /* lead card — slightly more prominent */
+  .member-card.is-lead {
+    background: linear-gradient(160deg, #140e28, #0e0d1e);
+    border-color: rgba(184,79,200,0.28);
+  }
+
+  .member-card.is-lead::before { opacity: 0.5; }
+
+  /* avatar circle */
+  .avatar {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2a1a42, #1a1030);
+    border: 1.5px solid rgba(184,79,200,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #c06acc;
+    flex-shrink: 0;
+  }
+
+  .member-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .member-info { display: flex; flex-direction: column; gap: 2px; }
+
+  .member-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .member-role {
+    font-size: 11.5px;
+    color: var(--purple);
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+
+  .member-role.muted { color: var(--muted); }
+
+  .member-divider { height: 1px; background: var(--border); }
+
+  .member-exp {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .exp-line {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .exp-dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: rgba(184,79,200,0.5);
+    flex-shrink: 0;
+    margin-top: 6px;
+  }
+
+  /* LEADERSHIP CARD — wider, more prominent */
+  .leadership-card {
+    background: linear-gradient(135deg, #1a0d2e, #110d22);
+    border: 1px solid rgba(184,79,200,0.32);
+    border-radius: 18px;
+    padding: 36px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 28px;
+    align-items: start;
+    transition: border-color 0.22s, transform 0.22s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .leadership-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(184,79,200,0.7), transparent);
+  }
+
+  .leadership-card::after {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(138,49,161,0.15), transparent 65%);
+    pointer-events: none;
+  }
+
+  .leadership-card:hover {
+    border-color: rgba(184,79,200,0.55);
+    transform: translateY(-3px);
+  }
+
+  .leadership-avatar {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3a1a5e, #2a0a4e);
+    border: 2px solid rgba(184,79,200,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #d080dc;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .leadership-body { position: relative; z-index: 1; }
+
+  .leadership-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+
+  .leadership-role {
+    font-size: 12px;
+    color: #d080dc;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .leadership-divider { height: 1px; background: var(--border); margin-bottom: 16px; }
+
+  .leadership-exp {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* SECTION SEPARATOR */
+  .section-sep {
+    margin: 80px 0 64px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .sep-line { flex: 1; height: 1px; background: var(--border); }
+
+  .sep-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* STAY TUNED CARD */
+  .stay-tuned-card {
+    border: 1px dashed rgba(184,79,200,0.22);
+    border-radius: 14px;
+    padding: 36px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 10px;
+    min-height: 160px;
+  }
+
+  .stay-tuned-card svg {
+    width: 28px; height: 28px;
+    stroke: rgba(184,79,200,0.35);
+    fill: none;
+    stroke-width: 1.4;
+    margin-bottom: 4px;
+  }
+
+  .stay-tuned-card h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .stay-tuned-card p { font-size: 12.5px; color: var(--muted); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    background: var(--bg2);
+    padding: 52px 2.5rem 32px;
+  }
+
+  .footer-inner {
+    max-width: 1140px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 48px;
+  }
+
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .footer-brand img { width: 36px; }
+  .footer-desc { color: var(--muted); font-size: 13px; line-height: 1.8; max-width: 280px; }
+
+  .footer-col h5 {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  .footer-col a { display: block; color: var(--muted); font-size: 13px; padding: 4px 0; transition: color 0.15s; }
+  .footer-col a:hover { color: white; }
+
+  .footer-bottom {
+    max-width: 1140px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-bottom-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .footer-bottom-logo img { width: 30px; }
+  .footer-copy { color: var(--muted); font-size: 12px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .cards-grid   { grid-template-columns: 1fr 1fr; }
+    .cards-grid-2 { grid-template-columns: 1fr; max-width: 100%; }
+    .leadership-card { grid-template-columns: 1fr; }
+    .footer-inner { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 560px) {
+    nav { padding: 0 1rem; }
+    .cards-grid { grid-template-columns: 1fr; }
+    .stats-row  { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <img src="logo.png" alt="6-DOF Drone">
+    6-DOF Drone Team
+  </div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="vehicle.html">Vehicle</a>
+    <a href="team.html" class="active">Team</a>
+    <a href="blog.html">Blog</a>
+    <a href="sponsors.html">Sponsors</a>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="section-label reveal">SUAS 2026 — KFUPM</div>
+  <h1 class="reveal">Our Team.</h1>
+  <p class="reveal">A multidisciplinary team of engineers, developers, and creators — working across seven subteams under one team lead to build a fully autonomous UAV from the ground up.</p>
+  <div class="stats-row reveal">
+    <div class="stat-item">
+      <div class="stat-num">13</div>
+      <div class="stat-lbl">Members</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">7</div>
+      <div class="stat-lbl">Subteams</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">1</div>
+      <div class="stat-lbl">Mission</div>
+    </div>
+  </div>
+</div>
+
+<div class="main-wrap">
+
+
+
+  <!-- ── SECTION SEPARATOR: TECHNICAL ── -->
+  <div class="section-sep reveal">
+    <div class="sep-line"></div>
+    <span class="sep-label">Technical Subteams</span>
+    <div class="sep-line"></div>
+  </div>
+
+  <!-- ── AI / PERCEPTION ── -->
+  <div class="subteam-block">
+    <div class="subteam-header reveal">
+      <div class="subteam-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><path d="M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg>
+      </div>
+      <span class="subteam-title">AI / Perception</span>
+      <span class="subteam-count">2 members</span>
+    </div>
+
+    <div class="cards-grid-2">
+
+      <div class="member-card is-lead reveal reveal-delay-1">
+        <div class="member-top" style="justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:14px;">
+            <div class="avatar">YS</div>
+            <div class="member-info">
+              <div class="member-name">Yaqine Saada</div>
+              <div class="member-role">AI Lead</div>
+            </div>
+          </div>
+          <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:rgba(184,79,200,0.25);letter-spacing:-0.5px;white-space:nowrap;flex-shrink:0;">Team Lead</div>
+        </div>
+        <div class="member-divider"></div>
+        <div class="member-exp">
+          <div class="exp-line"><div class="exp-dot"></div><span>Experience in system integration, control systems, and AI-based autonomy (MATLAB, Simulink, Python).</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Led AI development in Stage 2 of the competition.</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Developed a neural network-based PID controller for a quadcopter model.</span></div>
+        </div>
+      </div>
+
+      <div class="member-card is-lead reveal reveal-delay-2">
+        <div class="member-top">
+          <div class="avatar">KA</div>
+          <div class="member-info">
+            <div class="member-name">Kholood Althobaiti</div>
+            <div class="member-role">AI / Perception Vice Lead</div>
+          </div>
+        </div>
+        <div class="member-divider"></div>
+        <div class="member-exp">
+          <div class="exp-line"><div class="exp-dot"></div><span>Experience in ML and computer vision (KAUST AI Program).</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Worked on object detection and model development.</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Focuses on perception and mapping.</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── GN&C ── -->
+  <div class="subteam-block">
+    <div class="subteam-header reveal">
+      <div class="subteam-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+      </div>
+      <span class="subteam-title">GN&amp;C</span>
+      <span class="subteam-count">3 members</span>
+    </div>
+
+    <div class="cards-grid">
+
+      <div class="member-card is-lead reveal reveal-delay-1">
+        <div class="member-top">
+          <div class="avatar">XZ</div>
+          <div class="member-info">
+            <div class="member-name">Xixi Zhang</div>
+            <div class="member-role">GN&amp;C Lead</div>
+          </div>
+        </div>
+        <div class="member-divider"></div>
+        <div class="member-exp">
+          <div class="exp-line"><div class="exp-dot"></div><span>Experience in control systems and Simulink modeling.</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Led Ground Control Station development in Stage 2.</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Focuses on autonomy and waypoint navigation.</span></div>
+        </div>
+      </div>
+
+      <div class="member-card reveal reveal-delay-2">
+        <div class="member-top">
+          <div class="avatar">SA</div>
+          <div class="member-info">
+            <div class="member-name">Shahad Althubyani</div>
+            <div class="member-role muted">GN&amp;C Member</div>
+          </div>
+        </div>
+        <div class="member-divider"></div>
+        <div class="member-exp">
+          <div class="exp-line"><div class="exp-dot"></div><span>Experience in UAV control systems and flight stability.</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Worked on control implementation projects.</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Focuses on testing and debugging.</span></div>
+        </div>
+      </div>
+
+      <div class="member-card reveal reveal-delay-3">
+        <div class="member-top">
+          <div class="avatar">HB</div>
+          <div class="member-info">
+            <div class="member-name">Hashmia Bnnan</div>
+            <div class="member-role muted">GN&amp;C Member</div>
+          </div>
+        </div>
+        <div class="member-divider"></div>
+        <div class="member-exp">
+          <div class="exp-line"><div class="exp-dot"></div><span>Experience in UAV systems and control design.</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Worked on UAV development and performance optimization.</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Focuses on reliability and validation.</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── AIRFRAME + PAYLOAD ── -->
+  <div class="subteam-block">
+    <div class="subteam-header reveal">
+      <div class="subteam-icon">
+        <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+      </div>
+      <span class="subteam-title">Airframe &amp; Payload</span>
+      <span class="subteam-count">3 members</span>
+    </div>
+
+    <div class="cards-grid">
+
+      <div class="member-card is-lead reveal reveal-delay-1">
+        <div class="member-top">
+          <div class="avatar">UR</div>
+          <div class="member-info">
+            <div class="member-name">Ushna Rizwan</div>
+            <div class="member-role">Payload Lead</div>
+          </div>
+        </div>
+        <div class="member-divider"></div>
+        <div class="member-exp">
+          <div class="exp-line"><div class="exp-dot"></div><span>Experience in CAD (SolidWorks, Onshape) and 3D printing.</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Leads payload design and delivery mechanism development.</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Focuses on reliable payload integration.</span></div>
+        </div>
+      </div>
+
+      <div class="member-card reveal reveal-delay-2">
+        <div class="member-top">
+          <div class="avatar">SA</div>
+          <div class="member-info">
+            <div class="member-name">Sama Alshuibi</div>
+            <div class="member-role muted">Payload Member</div>
+          </div>
+        </div>
+        <div class="member-divider"></div>
+        <div class="member-exp">
+          <div class="exp-line"><div class="exp-dot"></div><span>Experience in SolidWorks and mechanical design.</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Supports payload design and subsystem integration.</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Focuses on build execution.</span></div>
+        </div>
+      </div>
+
+      <div class="member-card reveal reveal-delay-3">
+        <div class="member-top">
+          <div class="avatar">BA</div>
+          <div class="member-info">
+            <div class="member-name">Bayan Albadeen</div>
+            <div class="member-role muted">Airframe Member</div>
+          </div>
+        </div>
+        <div class="member-divider"></div>
+        <div class="member-exp">
+          <div class="exp-line"><div class="exp-dot"></div><span>Experience in SolidWorks and MATLAB analysis.</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Works on structure, propulsion, and endurance.</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Supports system integration.</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── AVIONICS ── -->
+  <div class="subteam-block">
+    <div class="subteam-header reveal">
+      <div class="subteam-icon">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <span class="subteam-title">Avionics</span>
+      <span class="subteam-count">2 members</span>
+    </div>
+
+    <div class="cards-grid-2">
+
+      <div class="member-card is-lead reveal reveal-delay-1">
+        <div class="member-top">
+          <div class="avatar">DD</div>
+          <div class="member-info">
+            <div class="member-name">Daline Dahlan</div>
+            <div class="member-role">Avionics Lead</div>
+          </div>
+        </div>
+        <div class="member-divider"></div>
+        <div class="member-exp">
+          <div class="exp-line"><div class="exp-dot"></div><span>Experience in UAV electronics and system integration.</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Led avionics subsystem in Stage 2.</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Focuses on power systems and wiring.</span></div>
+        </div>
+      </div>
+
+      <div class="member-card reveal reveal-delay-2">
+        <div class="member-top">
+          <div class="avatar">IS</div>
+          <div class="member-info">
+            <div class="member-name">Irina Saleem</div>
+            <div class="member-role muted">Avionics Member</div>
+          </div>
+        </div>
+        <div class="member-divider"></div>
+        <div class="member-exp">
+          <div class="exp-line"><div class="exp-dot"></div><span>Experience in embedded systems and circuit design.</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Worked on sensor and hardware integration.</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Supports system-wide electronics.</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SECTION SEPARATOR: SUPPORT ── -->
+  <div class="section-sep reveal">
+    <div class="sep-line"></div>
+    <span class="sep-label">Support Subteams</span>
+    <div class="sep-line"></div>
+  </div>
+
+  <!-- ── WEBSITE ── -->
+  <div class="subteam-block">
+    <div class="subteam-header reveal">
+      <div class="subteam-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <span class="subteam-title">Website</span>
+      <span class="subteam-count">1 member</span>
+    </div>
+
+    <div class="cards-grid-2">
+      <div class="member-card is-lead reveal reveal-delay-1">
+        <div class="member-top">
+          <div class="avatar">MK</div>
+          <div class="member-info">
+            <div class="member-name">Maiss Khalaf</div>
+            <div class="member-role">Website Lead</div>
+          </div>
+        </div>
+        <div class="member-divider"></div>
+        <div class="member-exp">
+          <div class="exp-line"><div class="exp-dot"></div><span>Experience in web development and automation.</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Builds and manages the team website.</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Focuses on technical presentation and outreach.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MEDIA ── -->
+  <div class="subteam-block">
+    <div class="subteam-header reveal">
+      <div class="subteam-icon">
+        <svg viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+      </div>
+      <span class="subteam-title">Media</span>
+      <span class="subteam-count">1 member</span>
+    </div>
+
+    <div class="cards-grid-2">
+      <div class="member-card is-lead reveal reveal-delay-1">
+        <div class="member-top">
+          <div class="avatar">SS</div>
+          <div class="member-info">
+            <div class="member-name">Shahad Shahwan</div>
+            <div class="member-role">Media Lead</div>
+          </div>
+        </div>
+        <div class="member-divider"></div>
+        <div class="member-exp">
+          <div class="exp-line"><div class="exp-dot"></div><span>Experience in social media and content creation.</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Manages team outreach and branding.</span></div>
+          <div class="exp-line"><div class="exp-dot"></div><span>Focuses on visual communication.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LOGISTICS ── -->
+  <div class="subteam-block">
+    <div class="subteam-header reveal">
+      <div class="subteam-icon">
+        <svg viewBox="0 0 24 24"><path d="M16 16l3-8 3 8-6 0"/><path d="M2 6h4l2 11 5-8 3 5"/><circle cx="6" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+      </div>
+      <span class="subteam-title">Logistics</span>
+      <span class="subteam-count">Coming Soon</span>
+    </div>
+
+    <div class="cards-grid-2">
+      <div class="stay-tuned-card reveal reveal-delay-1">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <h4>Logistics Team</h4>
+        <p>Stay Tuned — members will be announced shortly.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">
+        <img src="logo.png" alt="6-DOF Drone">
+        6-DOF Drone Team
+      </div>
+      <p class="footer-desc">An autonomous UAV team from KFUPM competing in the 2026 Student Unmanned Aerial Systems (SUAS) competition.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Navigate</h5>
+      <a href="index.html">Home</a>
+      <a href="vehicle.html">Vehicle</a>
+      <a href="team.html">Team</a>
+      <a href="blog.html">Blog</a>
+      <a href="sponsors.html">Sponsors</a>
+    </div>
+    <div class="footer-col">
+      <h5>Subsystems</h5>
+      <a href="ai.html">AI / Perception</a>
+      <a href="hardware.html">Hardware</a>
+      <a href="gcs.html">GCS</a>
+      <a href="mission.html">Mission</a>
+      <a href="docs.html">Documentation</a>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="footer-bottom-logo">
+      <img src="logo.png" alt="6-DOF Drone">
+      6-DOF Drone Team
+    </div>
+    <span class="footer-copy">© 2026 6-DOF Drone Team — KFUPM · SUAS Competition</span>
+  </div>
+</footer>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
